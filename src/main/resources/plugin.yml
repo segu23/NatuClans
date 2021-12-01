@@ -1,0 +1,6 @@
+name: NatuClans
+version: '${project.version}'
+main: org.kayteam.natuclans.NatuClans
+api-version: 1.17
+authors: [ KayTeam ]
+website: https://kayteam.org
