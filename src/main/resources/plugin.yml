@@ -1,6 +1,19 @@
 name: NatuClans
 version: '${project.version}'
 main: org.kayteam.natuclans.NatuClans
-api-version: 1.17
+api-version: 1.13
 authors: [ KayTeam ]
 website: https://kayteam.org
+depend: [WorldGuard]
+commands:
+  natuclans:
+    permission: natuclans.admin
+  clan:
+    permission: natuclans.cmd.clan
+  plot:
+    permission: natuclans.cmd.plot
+permissions:
+  natuclans.admin:
+    children:
+      - natuclans.cmd.clan
+      - natuclans.cmd.plot

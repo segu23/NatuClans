@@ -1,0 +1,26 @@
+inventories:
+  plotSettings:
+    title: "Plot Settings"
+    items:
+      close:
+        material: BARRIER
+        name: "&6Close menu"
+        lore:
+          - ""
+          - "&7Left click to close"
+      allowFlag:
+        material: LIME_WOOL
+        name: "&6%flag%"
+        lore:
+          - ""
+          - " &7&lStatus: &a&lAllow"
+          - ""
+          - "&7Left click to deny"
+      denyFlag:
+        material: RED_WOOL
+        name: "&6%flag%"
+        lore:
+          - ""
+          - " &7&lStatus: &c&lDeny"
+          - ""
+          - "&7Left click to allow"
