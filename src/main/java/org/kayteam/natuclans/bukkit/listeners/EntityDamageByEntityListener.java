@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.kayteam.natuclans.NatuClans;
+import org.kayteam.natuclans.clan.Clan;
 
 public class EntityDamageByEntityListener implements Listener {
 
@@ -18,7 +19,11 @@ public class EntityDamageByEntityListener implements Listener {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if(event.getEntity().getType() == EntityType.PLAYER){
             if(event.getDamager().getType() == EntityType.PLAYER){
-
+                Clan damagerClan = PLUGIN.getPlayerManager().getClanMember(event.getDamager().getName()).getPlayerClan();
+                Clan playerClan = PLUGIN.getPlayerManager().getClanMember(event.getEntity().getName()).getPlayerClan();
+                if(damagerClan.getClanName() == playerClan.getClanName()){
+                    event.setCancelled(true);
+                }
             }
         }
     }
