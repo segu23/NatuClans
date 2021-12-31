@@ -60,5 +60,7 @@ public final class NatuClans extends JavaPlugin {
     @Override
     public void onDisable() {
         BrandSender.sendBrandMessage(this, "&cDisabled");
+        getClanManager().unloadAllClans();
+        getPlayerManager().unloadAllMembers();
     }
 }

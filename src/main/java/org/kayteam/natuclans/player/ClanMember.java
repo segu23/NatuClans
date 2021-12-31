@@ -11,16 +11,12 @@ public class ClanMember {
 
     private final String playerName;
     private Clan playerClan;
-    private MemberFlags memberFlags;
     private ProtectedRegion memberPlot;
+    private MemberRole memberRole;
 
     public ClanMember(String playerName, Clan playerClan){
         this.playerName = playerName;
         this.playerClan = playerClan;
-    }
-
-    public void setMemberFlags(MemberFlags memberFlags) {
-        this.memberFlags = memberFlags;
     }
 
     public void setPlayerClan(Clan playerClan) {
@@ -35,10 +31,6 @@ public class ClanMember {
         return playerName;
     }
 
-    public MemberFlags getMemberFlags() {
-        return memberFlags;
-    }
-
     public void setMemberPlot(ProtectedRegion memberPlot) {
         this.memberPlot = memberPlot;
     }
@@ -49,5 +41,13 @@ public class ClanMember {
 
     public Player getPlayer(){
         return Bukkit.getPlayer(playerName);
+    }
+
+    public void setMemberRole(MemberRole memberRole) {
+        this.memberRole = memberRole;
+    }
+
+    public MemberRole getMemberRole() {
+        return memberRole;
     }
 }

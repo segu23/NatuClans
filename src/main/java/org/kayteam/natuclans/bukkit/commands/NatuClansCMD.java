@@ -54,7 +54,7 @@ public class NatuClansCMD implements CommandExecutor {
                         if(args.length > 1){
                             String clanName = args[1];
                             if(clanManager.isClan(clanName)){
-                                clanManager.setClanCommonProtectedZone(clanManager.getClan(clanName), player.getLocation());
+                                clanManager.createClanRegions(clanManager.getClan(clanName), player.getLocation());
                             }
                         }else{
                             // todo usage

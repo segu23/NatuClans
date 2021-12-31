@@ -16,8 +16,6 @@ public class PlotCMD implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        PLUGIN.getClanManager().createPlotDistribution(BlockVector3.at(-65, 0, -10), 50, 5, 5, 6);
-        //PLUGIN.getClanManager().createPlotDistribution(BlockVector3.at(-65, 0, -10));
         return false;
     }
 }

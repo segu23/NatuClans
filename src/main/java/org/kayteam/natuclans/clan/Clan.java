@@ -4,15 +4,18 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.kayteam.natuclans.player.ClanMember;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Clan {
 
     private final String clanName;
     private ProtectedRegion commonProtectedZone;
+    private ProtectedRegion clanRegion;
     private String clanDisplayName;
     private int deaths;
     private int kills;
+    private final HashMap<String, Integer> inUsePlots = new HashMap<>();
 
     public Clan(String clanName) {
         this.clanName = clanName;
@@ -64,5 +67,17 @@ public class Clan {
 
     public void setKills(int kills) {
         this.kills = kills;
+    }
+
+    public ProtectedRegion getClanRegion() {
+        return clanRegion;
+    }
+
+    public void setClanRegion(ProtectedRegion clanRegion) {
+        this.clanRegion = clanRegion;
+    }
+
+    public HashMap<String, Integer> getInUsePlots() {
+        return inUsePlots;
     }
 }

@@ -6,17 +6,17 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.kayteam.kayteamapi.inventory.InventoryBuilder;
 import org.kayteam.kayteamapi.yaml.Yaml;
 import org.kayteam.natuclans.NatuClans;
-import org.kayteam.natuclans.player.ClanMember;
+import org.kayteam.natuclans.clan.Clan;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlotSettingsMenu extends InventoryBuilder {
+public class ClanRegionSettingsMenu extends InventoryBuilder {
 
-    public PlotSettingsMenu(NatuClans plugin, ClanMember clanMember){
-        super(plugin.getSettings().getString("inventories.plotSettings.title"), 3);
+    public ClanRegionSettingsMenu(NatuClans plugin, Clan clan){
+        super(plugin.getSettings().getString("inventories.clanRegionSettings.title"), 3);
         Yaml settings = plugin.getSettings();
-        ProtectedRegion plotRegion = clanMember.getMemberPlot();
+        ProtectedRegion clanRegion = clan.getClanRegion();
         List<StateFlag> plotFlags = new ArrayList<>();
         plotFlags.add(Flags.BLOCK_BREAK);
         plotFlags.add(Flags.BLOCK_PLACE);
@@ -34,23 +34,23 @@ public class PlotSettingsMenu extends InventoryBuilder {
         // Flag items
         int slot = 0;
         for(StateFlag plotFlag : plotFlags){
-            if(plotRegion.getFlag(plotFlag) == StateFlag.State.ALLOW){
-                addItem(slot, () -> Yaml.replace(settings.getItemStack("inventories.plotSettings.items.allowFlag"), new String[][]{{"%flag%", plotFlag.getName()}}));
+            if(clanRegion.getFlag(plotFlag) == StateFlag.State.ALLOW){
+                addItem(slot, () -> Yaml.replace(settings.getItemStack("inventories.clanRegionSettings.items.allowFlag"), new String[][]{{"%flag%", plotFlag.getName()}}));
                 addLeftAction(slot, ((player, slot1) -> {
-                    plotRegion.setFlag(plotFlag, StateFlag.State.DENY);
-                    plugin.getInventoryManager().openInventory(player, new PlotSettingsMenu(plugin, clanMember));
+                    clanRegion.setFlag(plotFlag, StateFlag.State.DENY);
+                    plugin.getInventoryManager().openInventory(player, new CommonZoneSettingsMenu(plugin, clan));
                 }));
             }else{
-                addItem(slot, () -> Yaml.replace(settings.getItemStack("inventories.plotSettings.items.denyFlag"), new String[][]{{"%flag%", plotFlag.getName()}}));
+                addItem(slot, () -> Yaml.replace(settings.getItemStack("inventories.clanRegionSettings.items.denyFlag"), new String[][]{{"%flag%", plotFlag.getName()}}));
                 addLeftAction(slot, ((player, slot1) -> {
-                    plotRegion.setFlag(plotFlag, StateFlag.State.ALLOW);
-                    plugin.getInventoryManager().openInventory(player, new PlotSettingsMenu(plugin, clanMember));
+                    clanRegion.setFlag(plotFlag, StateFlag.State.ALLOW);
+                    plugin.getInventoryManager().openInventory(player, new CommonZoneSettingsMenu(plugin, clan));
                 }));
             }
             slot++;
         }
         // Close
-        addItem(22, () -> settings.getItemStack("inventories.plotSettings.items.close"));
+        addItem(22, () -> settings.getItemStack("inventories.clanRegionSettings.items.close"));
         addLeftAction(22, ((player, slot1) -> {
             player.closeInventory();
         }));
