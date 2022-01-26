@@ -4,16 +4,51 @@ main: org.kayteam.natuclans.NatuClans
 api-version: 1.13
 authors: [ KayTeam ]
 website: https://kayteam.org
-depend: [WorldGuard]
+depend: [WorldGuard, CombatLogX]
 commands:
   natuclans:
-    permission: natuclans.admin
+    permission: natuclans.natuclans.cmd
   clan:
-    permission: natuclans.cmd.clan
+    permission: natuclans.clan.cmd
   plot:
-    permission: natuclans.cmd.plot
+    permission: natuclans.plot.cmd
 permissions:
+  natuclans.natuclans:
+    children:
+      - natuclans.natuclans.cmd.createclan
+      - natuclans.natuclans.cmd.deleteclan
+      - natuclans.natuclans.cmd.reload
+  natuclans.cmd.plot:
+    children:
+      - natuclans.plot.cmd.home
+      - natuclans.plot.cmd.settings
+      - natuclans.plot.cmd.add
+      - natuclans.plot.cmd.remove
+  natuclans.cmd.clan:
+    children:
+      - natuclans.clan.cmd.spawn
+      - natuclans.clan.cmd.setspawn
+      - natuclans.clan.cmd.addbuilder
+      - natuclans.clan.cmd.setowner
+      - natuclans.clan.cmd.setdisplayname
+  natuclans.plot.flag:
+    children:
+      - natuclans.plot.flag.blockbreak
+      - natuclans.plot.flag.blockplace
+      - natuclans.plot.flag.use
+      - natuclans.plot.flag.interact
+      - natuclans.plot.flag.damageanimals
+      - natuclans.plot.flag.pvp
+      - natuclans.plot.flag.chestaccess
+      - natuclans.plot.flag.itempickup
+      - natuclans.plot.flag.itemdrop
+      - natuclans.plot.flag.mobspawning
+      - natuclans.plot.flag.itemframedestroy
+      - natuclans.plot.flag.paintingdestroy
+      - natuclans.plot.flag.itemframerotate
   natuclans.admin:
     children:
-      - natuclans.cmd.clan
-      - natuclans.cmd.plot
+      - natuclans.clan.cmd
+      - natuclans.plot.cmd
+      - natuclans.natuclans.cmd
+      - natuclans.plot.flag

@@ -15,8 +15,8 @@ public class PlayerQuitListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        PLUGIN.getPlayerManager().savePlayer(PLUGIN.getPlayerManager().getClanMember(event.getPlayer().getName()));
+        if(!PLUGIN.getClanManager().getClanList().isEmpty()){
+            PLUGIN.getPlayerManager().savePlayer(PLUGIN.getPlayerManager().getClanMember(event.getPlayer().getName()));
+        }
     }
-
-
 }

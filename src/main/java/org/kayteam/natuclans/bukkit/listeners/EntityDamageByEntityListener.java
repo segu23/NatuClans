@@ -21,7 +21,7 @@ public class EntityDamageByEntityListener implements Listener {
             if(event.getDamager().getType() == EntityType.PLAYER){
                 Clan damagerClan = PLUGIN.getPlayerManager().getClanMember(event.getDamager().getName()).getPlayerClan();
                 Clan playerClan = PLUGIN.getPlayerManager().getClanMember(event.getEntity().getName()).getPlayerClan();
-                if(damagerClan.getClanName() == playerClan.getClanName()){
+                if(damagerClan.getClanName().equals(playerClan.getClanName())){
                     event.setCancelled(true);
                 }
             }

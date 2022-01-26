@@ -1,12 +1,16 @@
 package org.kayteam.natuclans.bukkit.commands;
 
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.kayteam.kayteamapi.yaml.Yaml;
 import org.kayteam.natuclans.NatuClans;
+import org.kayteam.natuclans.bukkit.utils.PermissionChecker;
+import org.kayteam.natuclans.clan.Clan;
 import org.kayteam.natuclans.clan.ClanManager;
+import org.kayteam.natuclans.player.PlayerManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,64 +25,65 @@ public class NatuClansCMD implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(args.length > 0){
-            ClanManager clanManager = PLUGIN.getClanManager();
-            switch (args[0].toLowerCase()){
-                case "createclan":{
-                    if(args.length > 1){
-                        String clanName = args[1];
-                        if(!clanManager.isClan(clanName)){
-                            clanManager.createClan(clanName);
-                        }else{
-                            // todo already exist
-                        }
-                    }else{
-                        // todo usage
-                    }
-                }
-                case "deleteclan":{
-                    if(args.length > 1){
-                        String clanName = args[1];
-                        if(clanManager.isClan(clanName)){
-                            clanManager.deleteClan(clanName);
-                        }else{
-                            // todo doesnt exist clan
-                        }
-                    }else{
-                        // todo usage
-                    }
-                }
-                case "setcommonzone":{
-                    if(sender instanceof Player){
-                        Player player = (Player) sender;
-                        if(args.length > 1){
-                            String clanName = args[1];
-                            if(clanManager.isClan(clanName)){
-                                clanManager.createClanRegions(clanManager.getClan(clanName), player.getLocation());
+        if(sender instanceof Player){
+            PermissionChecker permissionChecker = new PermissionChecker(PLUGIN);
+            Player player = (Player) sender;
+            if(args.length > 0){
+                ClanManager clanManager = PLUGIN.getClanManager();
+                switch (args[0].toLowerCase()){
+                    case "createclan":{
+                        if(permissionChecker.check(player, "natuclans.natuclans.cmd.createclan")){
+                            if(args.length > 1){
+                                String clanName = args[1];
+                                Location centerLocation = player.getLocation();
+                                if(!clanManager.isClan(clanName)){
+                                    Clan clanCreated = clanManager.createClan(clanName, centerLocation);
+                                    PLUGIN.getMessages().sendMessage(player, "clanCreated", new String[][]{{"%clanName%", clanName}});
+                                    // todo meter todos dentro del clan si es el unico
+                                }else{
+                                    PLUGIN.getMessages().sendMessage(player, "clanAlreadyExist", new String[][]{{"%clanName%", clanName}});
+                                }
+                            }else{
+                                PLUGIN.getMessages().sendMessage(player, "insufficientArgs", new String[][]{{"%usage%", "natuclans createclan <clan-name>"}});
                             }
-                        }else{
-                            // todo usage
                         }
-                    }else{
-                        // todo only player command
+                        break;
+                    }
+                    case "deleteclan":{
+                        if(permissionChecker.check(player, "natuclans.natuclans.cmd.deleteclan")){
+                            if(args.length > 1){
+                                String clanName = args[1];
+                                if(clanManager.isClan(clanName)){
+                                    clanManager.deleteClan(clanName);
+                                    PLUGIN.getMessages().sendMessage(player, "clanDeleted", new String[][]{{"%clanName%", clanName}});
+                                }else{
+                                    PLUGIN.getMessages().sendMessage(player, "invalidClan");
+                                }
+                            }else{
+                                PLUGIN.getMessages().sendMessage(player, "insufficientArgs", new String[][]{{"%usage%", "natuclans deleteclan <clan-name>"}});
+                            }
+                        }
+                        break;
+                    }
+                    case "list":{
+                        // todo terminar comando
+                    }
+                    case "reload":{
+                        PlayerManager playerManager = PLUGIN.getPlayerManager();
+                        clanManager.unloadAllClans();
+                        PLUGIN.getSettings().reloadFileConfiguration();
+                        PLUGIN.getMessages().reloadFileConfiguration();
+                        clanManager.loadAllClans();
+                        PLUGIN.getMessages().sendMessage(player, "reloadComplete");
+                        break;
+                    }
+                    default:{
+                        PLUGIN.getMessages().sendMessage(player, "help.natuclansCmd");
                     }
                 }
-                case "setdisplayname":{
-                    if(args.length > 2){
-                        String clanName = args[1];
-
-                    }
-                }
+            }else{
+                PLUGIN.getMessages().sendMessage(player, "help.natuclansCmd");
             }
-        }else{
-            List<String> helpMessage = new ArrayList<>();
-            helpMessage.add("&a&lNatuClans &ahelp");
-            helpMessage.add(" &8> &7/natuclans: &fMain command");
-            helpMessage.add(" &8> &7/natuclans createclan <clan-name>: Create new clan");
-            helpMessage.add(" &8> &7/natuclans deleteclan <clan-name>: Delete existing clan");
-            helpMessage.add(" &8> &7/natuclans setcommonzone <clan-name>: Establish common 250x250 clan zone");
-            helpMessage.add(" &8> &7/natuclans setdisplayname <clan-name> <display-name>: Establish new clan display name");
-            Yaml.sendSimpleMessage(sender, helpMessage);
         }
         return false;
     }

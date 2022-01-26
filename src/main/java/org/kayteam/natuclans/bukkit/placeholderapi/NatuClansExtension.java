@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.kayteam.natuclans.NatuClans;
 import org.kayteam.natuclans.clan.Clan;
 import org.kayteam.natuclans.clan.ClanManager;
+import org.kayteam.natuclans.player.ClanMember;
 import org.kayteam.natuclans.player.PlayerManager;
 
 public class NatuClansExtension extends PlaceholderExpansion {
@@ -44,7 +45,8 @@ public class NatuClansExtension extends PlaceholderExpansion {
          */
         PlayerManager playerManager = PLUGIN.getPlayerManager();
         ClanManager clanManager = PLUGIN.getClanManager();
-        if(playerManager.getClanMember(player.getName()).getPlayerClan() != null){
+        try{
+            ClanMember clanMember = playerManager.getClanMember(player.getName());
             Clan clan = playerManager.getClanMember(player.getName()).getPlayerClan();
             if(params.startsWith("clan_name")){
                 return clan.getClanName();
@@ -53,7 +55,7 @@ public class NatuClansExtension extends PlaceholderExpansion {
             }else if(params.startsWith("clan_members")){
                 return String.valueOf(clan.getClanMembers().size());
             }else if(params.startsWith("clan_role")){
-
+                return clanMember.getMemberRole().toString();
             }else if(params.startsWith("clan_kills")){
                 return String.valueOf(clan.getKills());
             }else if(params.startsWith("clan_deaths")){
@@ -63,7 +65,7 @@ public class NatuClansExtension extends PlaceholderExpansion {
             }else{
                 return "&cInvalid placeholder";
             }
-        }else{
+        }catch (Exception e){
             return "&7None";
         }
         return "&cInvalid placeholder";

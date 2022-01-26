@@ -50,7 +50,7 @@ inventories:
           - ""
           - "&7Left click to allow"
   plotSettings:
-    title: "Plot Settings"
+    title: "Editing Plot Settings of %clanMember%"
     items:
       close:
         material: BARRIER

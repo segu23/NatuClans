@@ -2,8 +2,13 @@ display-name: "&4&lRED"
 region:
   world: "world"
   x: 0
+  z: 0
+spawn:
+  x: 0
   y: 0
   z: 0
+  yaw: 0.0
+  pitch: 0.0
 deaths: 20
 kills: 50
 members:
@@ -14,6 +19,6 @@ members:
     role: BUILDER
     plot: 1
   Zeth:
-    role: MANAGER
+    role: DEFAULT
     plot: 2
 ## region name format: natuclans-<clan>-common-zone / natuclans-red-common-zone
