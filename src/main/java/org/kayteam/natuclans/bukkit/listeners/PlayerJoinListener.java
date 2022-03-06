@@ -16,7 +16,9 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         if(!PLUGIN.getClanManager().getClanList().isEmpty()){
-            PLUGIN.getClanManager().memberJoinRandomClan(event.getPlayer().getName());
+            if(PLUGIN.getPlayerManager().getClanMember(event.getPlayer().getName()) == null){
+                PLUGIN.getClanManager().memberJoinRandomClan(event.getPlayer().getName());
+            }
         }
     }
 }

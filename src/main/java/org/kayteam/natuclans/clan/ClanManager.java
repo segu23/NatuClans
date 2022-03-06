@@ -1,9 +1,13 @@
 package org.kayteam.natuclans.clan;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.flags.RegionGroup;
+import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.managers.RemovalStrategy;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
@@ -30,8 +34,8 @@ public class ClanManager {
 
     public ClanManager(NatuClans plugin) {
         this.PLUGIN = plugin;
-        loadAllClans();
         createPlotDistribution(BlockVector3.at(-10, 0, -65), 50, 5, 5, 6);
+        loadAllClans();
     }
 
     private List<int[]> plotVectorsPosition;
@@ -54,13 +58,24 @@ public class ClanManager {
         return clans.containsKey(clanName);
     }
 
-    public Clan createClan(String clanName, Location centerLocation){
+    public boolean createClan(String clanName, Location centerLocation){
+        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+        RegionManager worldClanRegions = container.get(BukkitAdapter.adapt(Objects.requireNonNull(centerLocation.getWorld())));
+        assert worldClanRegions != null;
+        BlockVector3 min = BlockVector3.at(centerLocation.getBlockX()-290, 0, centerLocation.getBlockZ()-290);
+        BlockVector3 max = BlockVector3.at(centerLocation.getBlockX()+539, 256, centerLocation.getBlockZ()+539);
+        ProtectedRegion test = new ProtectedCuboidRegion("dummy", min, max);
+        ApplicableRegionSet set = worldClanRegions.getApplicableRegions(test);
+        if(set.getRegions().size() > 0){
+            return false;
+        }
         Clan clan = new Clan(clanName);
         clan.setClanDisplayName("&7"+clanName.toUpperCase());
         createClanRegions(clan, centerLocation);
         clans.put(clanName, clan);
         saveClan(clan);
-        return clan;
+        allPlayersWOClanJoin();
+        return true;
     }
 
     public void loadClanMember(String playerName, Clan clan){
@@ -68,19 +83,24 @@ public class ClanManager {
         Yaml clanFile = getClanFile(clan.getClanName());
         String clanName = clan.getClanName();
 
-        World world = PLUGIN.getServer().getWorld(PLUGIN.getClanManager().getClanFile(clanName).getString("region.world"));
+        World world = PLUGIN.getServer().getWorld(getClanFile(clanName).getString("region.world"));
         assert world != null;
         ProtectedRegion memberPlot = Objects.requireNonNull(WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world)))
                 .getRegion("natuclans-"+clanName+"-"+playerName);
         if(memberPlot == null){
-            PLUGIN.getClanManager().createMemberPlot(clanMember);
+            createMemberPlot(clanMember);
         }else{
+            memberPlot.setFlag(Flags.GREET_MESSAGE, PLUGIN.getMessages().getString("plotZoneEntry",new String[][]{{"%playerName%", clanMember.getPlayerName()}}));
+            memberPlot.setFlag(Flags.FAREWELL_MESSAGE, PLUGIN.getMessages().getString("plotZoneLeave",new String[][]{{"%playerName%", clanMember.getPlayerName()}}));
+
+            memberPlot.getOwners().addPlayer(clanMember.getPlayerName());
+            memberPlot.setPriority(5);
             clanMember.setMemberPlot(memberPlot);
         }
 
         try{
-            clanMember.setMemberRole(MemberRole.valueOf(PLUGIN.getClanManager().getClanFile(clanName).getString("members."+playerName+".role")));
-        }catch (EnumConstantNotPresentException e){
+            clanMember.setMemberRole(MemberRole.valueOf(getClanFile(clanName).getString("members."+playerName+".role")));
+        }catch(EnumConstantNotPresentException e){
             clanMember.setMemberRole(MemberRole.DEFAULT);
         }
 
@@ -126,31 +146,46 @@ public class ClanManager {
                 assert mainClanRegion != null;
                 mainClanRegion.setFlag(Flags.GREET_MESSAGE, PLUGIN.getMessages().getString("clanZoneEntry",new String[][]{{"%clanDisplayName%", clan.getClanDisplayName()}}));
                 mainClanRegion.setFlag(Flags.FAREWELL_MESSAGE, PLUGIN.getMessages().getString("clanZoneLeave",new String[][]{{"%clanDisplayName%", clan.getClanDisplayName()}}));
+                mainClanRegion.setFlag(Flags.ENTRY, StateFlag.State.DENY);
+                mainClanRegion.setFlag(Flags.ENTRY.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
                 clan.setClanRegion(mainClanRegion);
 
-                PLUGIN.getServer().dispatchCommand(PLUGIN.getServer().getConsoleSender(), "region flag "+mainClanRegion.getId()+" -w "+world.getName()+" -g nonmembers entry deny");
+                //PLUGIN.getServer().dispatchCommand(PLUGIN.getServer().getConsoleSender(), "region flag "+mainClanRegion.getId()+" -w "+world.getName()+" -g nonmembers entry deny");
             }catch (Exception e){
                 PLUGIN.getLogger().log(Level.SEVERE, "An error has occurred trying to load Common 250x250 zone.");
             }
+            clan.setKills(clanFile.getInt("kills"));
+            clan.setDeaths(clanFile.getInt("deaths"));
+            getClansMap().put(clanName, clan);
+            PLUGIN.getLogger().log(Level.INFO, "Clan called "+clanName+" has been loaded.");
         }
-        clan.setKills(clanFile.getInt("kills"));
-        clan.setDeaths(clanFile.getInt("deaths"));
-        getClansMap().put(clanName, clan);
-        PLUGIN.getLogger().log(Level.INFO, "Clan called "+clanName+" has been loaded.");
     }
 
     public void memberJoinRandomClan(String playerName){
-        ClanMember clanMember;
-        int clansAmount = PLUGIN.getClanManager().getClanList().size();
+        List<Clan> possibleClans = new ArrayList<>();
+        getClanList().forEach((clan) -> {
+            if(clan.getClanMembers().size() < 200){
+                possibleClans.add(clan);
+            }
+        });
+        if(possibleClans.size() == 0){
+            return;
+        }
+        int clansAmount = possibleClans.size();
         Random random = new Random();
         int clanSelected = random.nextInt(clansAmount);
-        Clan clan = new ArrayList<>(PLUGIN.getClanManager().getClanList()).get(clanSelected);
-        clanMember = new ClanMember(playerName, clan);
-        clanMember.setMemberRole(MemberRole.DEFAULT);
-        PLUGIN.getClanManager().saveClan(clan);
-        PLUGIN.getClanManager().createMemberPlot(clanMember);
+        Clan clan = new ArrayList<>(possibleClans).get(clanSelected);
+        ClanMember clanMember = new ClanMember(playerName, clan);
+        if(clan.getClanMembers().size() == 0){
+            clanMember.setMemberRole(MemberRole.OWNER);
+        }else{
+            clanMember.setMemberRole(MemberRole.DEFAULT);
+        }
         clan.getClanMembers().add(clanMember);
+        saveClan(clan);
+        createMemberPlot(clanMember);
         clan.getClanRegion().getMembers().addPlayer(playerName);
+        clan.getCommonProtectedZone().getMembers().addPlayer(playerName);
     }
 
     public void createClanRegions(Clan clan, Location centerLocation) {
@@ -170,7 +205,14 @@ public class ClanManager {
         ProtectedRegion commonRegion = new ProtectedCuboidRegion("natuclans-"+clan.getClanName()+"-common-zone", minCommon, maxCommon);
         commonRegion.setFlag(Flags.GREET_MESSAGE, PLUGIN.getMessages().getString("commonZoneEntry",new String[][]{{"%clanDisplayName%", clan.getClanDisplayName()}}));
         commonRegion.setFlag(Flags.FAREWELL_MESSAGE, PLUGIN.getMessages().getString("commonZoneLeave",new String[][]{{"%clanDisplayName%", clan.getClanDisplayName()}}));
+
+        commonRegion.setFlag(Flags.BLOCK_PLACE, StateFlag.State.DENY);
+        commonRegion.setFlag(Flags.BLOCK_PLACE.getRegionGroupFlag(), RegionGroup.NON_OWNERS);
+        commonRegion.setFlag(Flags.BLOCK_BREAK, StateFlag.State.DENY);
+        commonRegion.setFlag(Flags.BLOCK_BREAK.getRegionGroupFlag(), RegionGroup.NON_OWNERS);
+
         commonRegion.setPriority(10);
+
         currentWorldRegions.addRegion(commonRegion);
 
         BlockVector3 minMain = BlockVector3.at(centerLocation.getX()-290, 0, centerLocation.getZ()-290);
@@ -178,6 +220,14 @@ public class ClanManager {
         ProtectedRegion mainRegion = new ProtectedCuboidRegion("natuclans-"+clan.getClanName()+"-main-region", minMain, maxMain);
         mainRegion.setFlag(Flags.GREET_MESSAGE, PLUGIN.getMessages().getString("clanZoneEntry",new String[][]{{"%clanDisplayName%", clan.getClanDisplayName()}}));
         mainRegion.setFlag(Flags.FAREWELL_MESSAGE, PLUGIN.getMessages().getString("clanZoneLeave",new String[][]{{"%clanDisplayName%", clan.getClanDisplayName()}}));
+
+        mainRegion.setFlag(Flags.BLOCK_PLACE, StateFlag.State.DENY);
+        mainRegion.setFlag(Flags.BLOCK_PLACE.getRegionGroupFlag(), RegionGroup.NON_OWNERS);
+        mainRegion.setFlag(Flags.BLOCK_BREAK, StateFlag.State.DENY);
+        mainRegion.setFlag(Flags.BLOCK_BREAK.getRegionGroupFlag(), RegionGroup.NON_OWNERS);
+        mainRegion.setFlag(Flags.ENTRY, StateFlag.State.DENY);
+        mainRegion.setFlag(Flags.ENTRY.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
+
         mainRegion.setPriority(2);
 
         currentWorldRegions.addRegion(mainRegion);
@@ -185,7 +235,6 @@ public class ClanManager {
             currentWorldRegions.save();
         }catch (Exception ignored){}
 
-        PLUGIN.getServer().dispatchCommand(PLUGIN.getServer().getConsoleSender(), "region flag "+mainRegion.getId()+" -w "+centerLocation.getWorld().getName()+" -g nonmembers entry deny");
 
         clan.setCommonProtectedZone(commonRegion);
         clan.setClanRegion(mainRegion);
@@ -218,13 +267,20 @@ public class ClanManager {
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         RegionManager worldClanRegions = container.get(BukkitAdapter.adapt(Objects.requireNonNull(PLUGIN.getServer().getWorld(getClanFile(clan.getClanName()).getString("region.world")))));
         assert worldClanRegions != null;
-        worldClanRegions.removeRegion(clan.getClanRegion().getId());
-        worldClanRegions.removeRegion(clan.getCommonProtectedZone().getId());
-        for(ClanMember clanMember : clan.getClanMembers()){
-            worldClanRegions.removeRegion(clanMember.getMemberPlot().getId());
+        for(String regionID : worldClanRegions.getRegions().keySet()){
+            if(regionID.startsWith("natuclans-"+clanName)){
+                worldClanRegions.removeRegion(regionID);
+            }
         }
         unloadClan(getClan(clanName));
         getClanFile(clanName).deleteFileConfiguration();
+        allPlayersWOClanJoin();
+        try{
+            worldClanRegions.save();
+        }catch(Exception e){}
+    }
+
+    public void allPlayersWOClanJoin(){
         PlayerManager playerManager = PLUGIN.getPlayerManager();
         List<String> onlinePlayerNames = PLUGIN.getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
         List<String> onlineClanMemberNames = playerManager.getAllClansMembers().stream().map(ClanMember::getPlayerName).collect(Collectors.toList());
@@ -233,9 +289,6 @@ public class ClanManager {
         for(String playerName : playerNamesWithoutClan){
             memberJoinRandomClan(playerName);
         }
-        try{
-            worldClanRegions.save();
-        }catch(Exception e){}
     }
 
     public Yaml getClanFile(String clanName){
@@ -279,9 +332,10 @@ public class ClanManager {
         try{
             worldClanRegions.save();
         }catch (Exception e){}
-
+        clan.getInUsePlots().remove(clanMember.getPlayerName());
         clan.getClanRegion().getMembers().removePlayer(clanMember.getPlayerName());
         saveClan(clan);
+        memberJoinRandomClan(clanMember.getPlayerName());
     }
 
     public BlockVector3 getPlotMinVector(int plotNumber){
@@ -356,8 +410,13 @@ public class ClanManager {
                 plotRegion.setFlag(Flags.GREET_MESSAGE, PLUGIN.getMessages().getString("plotZoneEntry",new String[][]{{"%playerName%", clanMember.getPlayerName()}}));
                 plotRegion.setFlag(Flags.FAREWELL_MESSAGE, PLUGIN.getMessages().getString("plotZoneLeave",new String[][]{{"%playerName%", clanMember.getPlayerName()}}));
 
+                plotRegion.setFlag(Flags.BLOCK_PLACE, StateFlag.State.ALLOW);
+                plotRegion.setFlag(Flags.BLOCK_PLACE.getRegionGroupFlag(), RegionGroup.MEMBERS);
+                plotRegion.setFlag(Flags.BLOCK_BREAK, StateFlag.State.ALLOW);
+                plotRegion.setFlag(Flags.BLOCK_BREAK.getRegionGroupFlag(), RegionGroup.MEMBERS);
+
                 plotRegion.getOwners().addPlayer(clanMember.getPlayerName());
-                plotRegion.setPriority(5);
+                plotRegion.setPriority(11);
 
                 clanMember.setMemberPlot(plotRegion);
 

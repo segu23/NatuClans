@@ -1,0 +1,309 @@
+clanDeleteConfirm:
+  title: "Clan Delete Confirm"
+  items:
+    info:
+      material: PAPER
+      name: "&aClan Information"
+      lore:
+        - ""
+        - " &7Clan Name: &f%clanName%"
+        - " &7Displayname: &f%clanDisplayName%"
+        - " &7Members: &f%clanMembers%"
+        - " &7Deaths: &f%clanDeaths%"
+        - " &7Kills: &f%clanKills%"
+    cancel:
+      material: RED_WOOL
+      name: "&4Cancel"
+      lore:
+        - ""
+        - "&7Left click to cancel"
+    confirm:
+      material: LIME_WOOL
+      name: "&aDelete"
+      lore:
+        - ""
+        - "&7Left click to confirm"
+    fill:
+      material: RED_STAINED_GLASS_PANE
+      name: ""
+clanList:
+  title: "Clan List"
+  items:
+    close:
+      material: BARRIER
+      name: "&6Close menu"
+      lore:
+        - ""
+        - "&7Left click to close"
+    info:
+      material: CHEST
+      name: "Server Information"
+      lore:
+        - ""
+        - " &7Number of clans: &f%clansAmount%"
+        - " &7Number of members: &f%membersAmount%"
+    clan:
+      material: PAPER
+      name: "&a%clanName%"
+      lore:
+        - ""
+        - " &7Displayname: &f%clanDisplayName%"
+        - " &7Members: &f%clanMembers%"
+        - " &7Deaths: &f%clanDeaths%"
+        - " &7Kills: &f%clanKills%"
+        - ""
+        - "&7Left click to teleport to clan spawn"
+        - "&7Right click to delete clan"
+    fill:
+      material: RED_STAINED_GLASS_PANE
+      name: ""
+    nextPage:
+      material: ARROW
+      name: "&6Next Page"
+      lore:
+        - "&6"
+        - "&7Left Click to go"
+    previousPage:
+      material: ARROW
+      name: "&6Previous Page"
+      lore:
+        - "&6"
+        - "&7Left Click to go"
+clanMembers:
+  title: "Clan Members"
+  items:
+    clan:
+      material: "CHEST"
+      name: "&aClan Information"
+      lore:
+        - ""
+        - " &7Name: &f%clanName%"
+        - " &7Displayname: &f%clanDisplayName%"
+        - " &7Members: &f%clanMembers%"
+        - " &7Deaths: &f%clanDeaths%"
+        - " &7Kills: &f%clanKills%"
+    fill:
+      material: RED_STAINED_GLASS_PANE
+      name: ""
+    nextPage:
+      material: ARROW
+      name: "&6Next Page"
+      lore:
+        - "&6"
+        - "&7Left Click to go"
+    previousPage:
+      material: ARROW
+      name: "&6Previous Page"
+      lore:
+        - "&6"
+        - "&7Left Click to go"
+    close:
+      material: BARRIER
+      name: "&6Close menu"
+      lore:
+        - ""
+        - "&7Left click to close"
+    clanMember:
+      material: PLAYER_HEAD
+      name: "&a%playerName%"
+      lore:
+        - ""
+        - " &7Role: &f%memberRole%"
+        - ""
+        - "&7Left click to kick from clan."
+clanBuilders:
+  title: "Clan Builders"
+  items:
+    clan:
+      material: "CHEST"
+      name: "&aClan Information"
+      lore:
+        - ""
+        - " &7Name: &f%clanName%"
+        - " &7Displayname: &f%clanDisplayName%"
+        - " &7Members: &f%clanMembers%"
+        - " &7Deaths: &f%clanDeaths%"
+        - " &7Kills: &f%clanKills%"
+    fill:
+      material: RED_STAINED_GLASS_PANE
+      name: ""
+    nextPage:
+      material: ARROW
+      name: "&6Next Page"
+      lore:
+        - "&6"
+        - "&7Left Click to go"
+    previousPage:
+      material: ARROW
+      name: "&6Previous Page"
+      lore:
+        - "&6"
+        - "&7Left Click to go"
+    close:
+      material: BARRIER
+      name: "&6Close menu"
+      lore:
+        - ""
+        - "&7Left click to close"
+    clanMember:
+      material: PLAYER_HEAD
+      name: "&a%playerName%"
+      lore:
+        - ""
+        - " &7Role: &f%memberRole%"
+        - ""
+        - "&7Left click to set default role."
+clanManagers:
+  title: "Clan Managers"
+  items:
+    clan:
+      material: "CHEST"
+      name: "&aClan Information"
+      lore:
+        - ""
+        - " &7Name: &f%clanName%"
+        - " &7Displayname: &f%clanDisplayName%"
+        - " &7Members: &f%clanMembers%"
+        - " &7Deaths: &f%clanDeaths%"
+        - " &7Kills: &f%clanKills%"
+    fill:
+      material: RED_STAINED_GLASS_PANE
+      name: ""
+    nextPage:
+      material: ARROW
+      name: "&6Next Page"
+      lore:
+        - "&6"
+        - "&7Left Click to go"
+    previousPage:
+      material: ARROW
+      name: "&6Previous Page"
+      lore:
+        - "&6"
+        - "&7Left Click to go"
+    close:
+      material: BARRIER
+      name: "&6Close menu"
+      lore:
+        - ""
+        - "&7Left click to close"
+    clanMember:
+      material: PLAYER_HEAD
+      name: "&a%playerName%"
+      lore:
+        - ""
+        - " &7Role: &f%memberRole%"
+        - ""
+        - "&7Left click to set default role."
+plotMembers:
+  title: "Plot Members"
+  items:
+    plotOwner:
+      material: "PLAYER_HEAD"
+      name: "&aPlot Information"
+      lore:
+        - ""
+        - " &7Owner: &f%playerName%"
+        - " &7Members: &f%plotMembers%"
+    fill:
+      material: RED_STAINED_GLASS_PANE
+      name: ""
+    nextPage:
+      material: ARROW
+      name: "&6Next Page"
+      lore:
+        - "&6"
+        - "&7Left Click to go"
+    previousPage:
+      material: ARROW
+      name: "&6Previous Page"
+      lore:
+        - "&6"
+        - "&7Left Click to go"
+    close:
+      material: BARRIER
+      name: "&6Close menu"
+      lore:
+        - ""
+        - "&7Left click to close"
+    plotMember:
+      material: PLAYER_HEAD
+      name: "&a%playerName%"
+      lore:
+        - ""
+        - "&7Left click to remove from plot members."
+clanRegionSettings:
+  title: "Clan Region Settings"
+  items:
+    close:
+      material: BARRIER
+      name: "&6Close menu"
+      lore:
+        - ""
+        - "&7Left click to close"
+    allowFlag:
+      material: LIME_WOOL
+      name: "&6%flag%"
+      lore:
+        - ""
+        - " &7&lStatus: &a&lAllow"
+        - ""
+        - "&7Left click to deny"
+    denyFlag:
+      material: RED_WOOL
+      name: "&6%flag%"
+      lore:
+        - ""
+        - " &7&lStatus: &c&lDeny"
+        - ""
+        - "&7Left click to allow"
+commonZoneSettings:
+  title: "Common Zone Settings"
+  items:
+    close:
+      material: BARRIER
+      name: "&6Close menu"
+      lore:
+        - ""
+        - "&7Left click to close"
+    allowFlag:
+      material: LIME_WOOL
+      name: "&6%flag%"
+      lore:
+        - ""
+        - " &7&lStatus: &a&lAllow"
+        - ""
+        - "&7Left click to deny"
+    denyFlag:
+      material: RED_WOOL
+      name: "&6%flag%"
+      lore:
+        - ""
+        - " &7&lStatus: &c&lDeny"
+        - ""
+        - "&7Left click to allow"
+plotSettings:
+  title: "Editing Plot Settings of %clanMember%"
+  items:
+    close:
+      material: BARRIER
+      name: "&6Close menu"
+      lore:
+        - ""
+        - "&7Left click to close"
+    allowFlag:
+      material: LIME_WOOL
+      name: "&6%flag%"
+      lore:
+        - ""
+        - " &7&lStatus: &a&lAllow"
+        - ""
+        - "&7Left click to deny"
+    denyFlag:
+      material: RED_WOOL
+      name: "&6%flag%"
+      lore:
+        - ""
+        - " &7&lStatus: &c&lDeny"
+        - ""
+        - "&7Left click to allow"

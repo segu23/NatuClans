@@ -2,33 +2,43 @@ name: NatuClans
 version: '${project.version}'
 main: org.kayteam.natuclans.NatuClans
 api-version: 1.13
-authors: [ KayTeam ]
+author: KayTeam
 website: https://kayteam.org
-depend: [WorldGuard, CombatLogX]
+depend: [WorldGuard, CombatLogX, PlaceholderAPI]
 commands:
   natuclans:
-    permission: natuclans.natuclans.cmd
+    description: NatuClans main command
   clan:
-    permission: natuclans.clan.cmd
+    description: NatuClans clan main command
   plot:
-    permission: natuclans.plot.cmd
+    description: NatuClans plot main command
 permissions:
   natuclans.natuclans:
     children:
       - natuclans.natuclans.cmd.createclan
       - natuclans.natuclans.cmd.deleteclan
       - natuclans.natuclans.cmd.reload
+      - natuclans.natuclans.cmd.list
   natuclans.cmd.plot:
     children:
       - natuclans.plot.cmd.home
       - natuclans.plot.cmd.settings
+      - natuclans.plot.cmd.members
       - natuclans.plot.cmd.add
       - natuclans.plot.cmd.remove
   natuclans.cmd.clan:
     children:
+      - natuclans.clan.cmd.leave
       - natuclans.clan.cmd.spawn
       - natuclans.clan.cmd.setspawn
+      - natuclans.clan.cmd.settings
+      - natuclans.clan.cmd.commonzonesettings
+      - natuclans.clan.cmd.members
+      - natuclans.clan.cmd.kick
       - natuclans.clan.cmd.addbuilder
+      - natuclans.clan.cmd.builders
+      - natuclans.clan.cmd.addmanager
+      - natuclans.clan.cmd.managers
       - natuclans.clan.cmd.setowner
       - natuclans.clan.cmd.setdisplayname
   natuclans.plot.flag:

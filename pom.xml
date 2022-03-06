@@ -84,13 +84,13 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.17.1-R0.1-SNAPSHOT</version>
+            <version>1.18.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.KayTeam-Studio</groupId>
             <artifactId>KayTeamAPI</artifactId>
-            <version>LATEST</version>
+            <version>v1.2.4</version>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldguard</groupId>

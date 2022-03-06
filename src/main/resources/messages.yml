@@ -4,8 +4,8 @@ plotZoneEntry: "&9&lNatuClans &8> &aEntrando en la parcela del jugador %playerNa
 plotZoneLeave: "&9&lNatuClans &8> &cSaliendo de la parcela del jugador %playerName%&c."
 clanZoneEntry: "&9&lNatuClans &8> &aEntrando en el clan %clanDisplayName%&a."
 clanZoneLeave: "&9&lNatuClans &8> &cSaliendo del clan %clanDisplayName%&c."
-plotEntry: "&9&lNatuClans &8> &aEntrando en la parcela de &f%playerName%&a."
-plotLeave: "&9&lNatuClans &8> &cSaliendo de la parcela de &f%playerName%&c."
+plotEntry: "&9&lNatuClans &8> &aEntrando en la parcela de &7%playerName%&a."
+plotLeave: "&9&lNatuClans &8> &cSaliendo de la parcela de &7%playerName%&c."
 inCombat: "&9&lNatuClans &8> &cActualmente estás en combate y no puedes hacer esto."
 insufficientArgs: "&9&lNatuClans &8> &cArgumentos insuficientes, uso correcto &7/%usage%&c."
 invalidMember: "&9&lNatuClans &8> &cEl jugador ingresado es inválido o no se encuentra conectado."
@@ -21,12 +21,22 @@ memberPlotRemoved: "&9&lNatuClans &8> &cEl miembro &f%clanMember% &cfue removido
 betterOrEqualRole: "&9&lNatuClans &8> &c¡El miembro ingresado ya tiene un rol igual o superior!"
 spawnSetted: "&9&lNatuClans &8> &aEl nuevo spawn del clan fue establecido correctamente."
 spawnTeleport: "&9&lNatuClans &8> &aFuiste teletransportado al spawn del clan."
+displaynameSetted: "&9&lNatuClans &8> &aEl display name del clan ha sido establecido en &f%displayName%"
 noPermissions: "&9&lNatuClans &8> &c¡No tienes permisos para ejecutar este comando!"
 noRole: "&9&lNatuClans &8> &c¡No tienes el rol suficiente para hacer esto!"
 roleSetted: "&9&lNatuClans &8> &aEl miembro &f%playerName% &aahora posee el rol &f%clanRole%&a."
+memberKicked: "&9&lNatuClans &8> &aEl miembro &f%playerName% &afue echado del clan correctamente."
 reloadComplete: "&9&lNatuClans &8> &aEl plugin ha sido recargado correctamente."
 noClan: "&9&lNatuClans &8> &c¡No perteneces a ningún clan!"
 successfullyClanLeave: "&9&lNatuClans &8> &a¡Haz abandonado el clan correctamente!"
+cantLeaveBeingTheOwner: "&9&lNatuClans &c¡No puedes abandonar el clan ya que eres el dueño!"
+regionConflict: "&9&lNatuClans &8> &c¡El clan no pudo ser creado porque se genera un conflicto con otras regiones existentes!"
+membersList:
+  header: "&9&lNatuClans &8> &aLista de miembros."
+  indexs: " &7- &f%memberName%"
+clanList:
+  header: "&9&lNatuClans &8> &aLista de clanes."
+  indexs: " &7- &f%clanName%"
 help:
   plotCmd:
     - "&a&lNatuClans &ahelp"

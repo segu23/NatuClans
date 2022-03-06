@@ -1,8 +1,13 @@
 package org.kayteam.natuclans.bukkit.inventories;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.flags.RegionGroup;
 import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
 import org.bukkit.entity.Player;
 import org.kayteam.kayteamapi.inventory.InventoryBuilder;
 import org.kayteam.kayteamapi.yaml.Yaml;
@@ -11,13 +16,14 @@ import org.kayteam.natuclans.player.ClanMember;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class PlotSettingsMenu extends InventoryBuilder {
 
     public PlotSettingsMenu(NatuClans plugin, ClanMember clanMember){
-        super(plugin.getSettings().getString("inventories.plotSettings.title", new String[][]{{"%clanMember%", clanMember.getPlayerName()}}), 3);
+        super(plugin.getInventories().getString("plotSettings.title", new String[][]{{"%clanMember%", clanMember.getPlayerName()}}), 3);
         Player player = clanMember.getPlayer();
-        Yaml settings = plugin.getSettings();
+        Yaml inventories = plugin.getInventories();
         ProtectedRegion plotRegion = clanMember.getMemberPlot();
         List<StateFlag> plotFlags = new ArrayList<>();
         if(player.hasPermission("natuclans.plot.flag.blockbreak")){
@@ -63,22 +69,40 @@ public class PlotSettingsMenu extends InventoryBuilder {
         int slot = 0;
         for(StateFlag plotFlag : plotFlags){
             if(plotRegion.getFlag(plotFlag) == StateFlag.State.ALLOW){
-                addItem(slot, () -> Yaml.replace(settings.getItemStack("inventories.plotSettings.items.allowFlag"), new String[][]{{"%flag%", plotFlag.getName()}}));
+                addItem(slot, () -> Yaml.replace(inventories.getItemStack("plotSettings.items.allowFlag"), new String[][]{{"%flag%", plotFlag.getName()}}));
                 addLeftAction(slot, ((player1, slot1) -> {
                     plotRegion.setFlag(plotFlag, StateFlag.State.DENY);
+                    plotRegion.setFlag(plotFlag.getRegionGroupFlag(), RegionGroup.NON_OWNERS);
                     plugin.getInventoryManager().openInventory(player1, new PlotSettingsMenu(plugin, clanMember));
+
+                    RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+                    RegionManager worldClanRegions = container.get(BukkitAdapter.adapt(Objects.requireNonNull(plugin.getServer().getWorld(plugin.getClanManager().getClanFile(clanMember.getPlayerClan().getClanName()).getString("region.world")))));
+                    assert worldClanRegions != null;
+                    worldClanRegions.addRegion(plotRegion);
+                    try{
+                        worldClanRegions.save();
+                    }catch (Exception ignored){}
                 }));
             }else{
-                addItem(slot, () -> Yaml.replace(settings.getItemStack("inventories.plotSettings.items.denyFlag"), new String[][]{{"%flag%", plotFlag.getName()}}));
+                addItem(slot, () -> Yaml.replace(inventories.getItemStack("plotSettings.items.denyFlag"), new String[][]{{"%flag%", plotFlag.getName()}}));
                 addLeftAction(slot, ((player1, slot1) -> {
                     plotRegion.setFlag(plotFlag, StateFlag.State.ALLOW);
+                    plotRegion.setFlag(plotFlag.getRegionGroupFlag(), RegionGroup.OWNERS);
                     plugin.getInventoryManager().openInventory(player1, new PlotSettingsMenu(plugin, clanMember));
+
+                    RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+                    RegionManager worldClanRegions = container.get(BukkitAdapter.adapt(Objects.requireNonNull(plugin.getServer().getWorld(plugin.getClanManager().getClanFile(clanMember.getPlayerClan().getClanName()).getString("region.world")))));
+                    assert worldClanRegions != null;
+                    worldClanRegions.addRegion(plotRegion);
+                    try{
+                        worldClanRegions.save();
+                    }catch (Exception ignored){}
                 }));
             }
             slot++;
         }
         // Close
-        addItem(22, () -> settings.getItemStack("inventories.plotSettings.items.close"));
+        addItem(22, () -> inventories.getItemStack("plotSettings.items.close"));
         addLeftAction(22, ((player1, slot1) -> {
             player1.closeInventory();
         }));

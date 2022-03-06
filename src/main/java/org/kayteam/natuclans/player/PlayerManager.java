@@ -28,7 +28,12 @@ public class PlayerManager {
     }
 
     public ClanMember getClanMember(String playerName){
-        return getAllClansMembersMap().getOrDefault(playerName, null);
+        for(String memberName : getAllClansMembersMap().keySet()){
+            if(playerName.equalsIgnoreCase(memberName)){
+                return getAllClansMembersMap().get(memberName);
+            }
+        }
+        return null;
     }
 
     public HashMap<String, ClanMember> getAllClansMembersMap(){
